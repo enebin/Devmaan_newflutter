@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "21097224042",
+    "firebase_url": "https://devman-ae85d-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "devman-ae85d",
+    "storage_bucket": "devman-ae85d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:21097224042:android:4ace83adbebdee4e4df713",
+        "android_client_info": {
+          "package_name": "com.example.devmaan_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "21097224042-dnjlbbuhdmkceohqbdj7g58ugc2c1olk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOG515aKPky6E1ZIsSPwB-zf6cytJeAyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "21097224042-dnjlbbuhdmkceohqbdj7g58ugc2c1olk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "21097224042-od71ilqs1hhpctpsqipuq5mtl3ln8lqq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.enebin.devmaan"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
