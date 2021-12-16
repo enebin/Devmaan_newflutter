@@ -2,6 +2,8 @@ import 'util.dart';
 import 'model/notice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:responsive_grid/responsive_grid.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,8 +35,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool isWeb = false;
-  List<Notice> notices = [
+  bool _isWeb = false;
+  List<Notice> _notices = [
     Notice(
       company: Company(name: "Naver"),
       title: "귀여운 뉴비 모바일 개발자 모집",
@@ -48,23 +50,83 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Util util = Util();
-    isWeb = util.checkIsWeb();
-    util.fetchData(notices);
+    setState(() {
+      _isWeb = util.checkIsWeb();
+      fetchData();
+    });
+  }
+
+  void fetchData() {
+    final databaseReference = FirebaseDatabase.instance.reference();
+
+    databaseReference.child('notices').once().then((DataSnapshot snapshot) {
+      final Map<String, dynamic> data =
+          Map<String, dynamic>.from(snapshot.value);
+
+      setState(() {
+        _notices = List<Notice>.from(
+            data.values.map((notice) => Notice.fromJson(notice)));
+      });
+      print("[System] ${_notices.length} notices fetched.");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = size.height / 2;
+    final double itemWidth = size.width / 2;
+
+    return Material(
+        child: PageView(
+      scrollDirection: Axis.vertical,
+      children: [
+        Scaffold(
+          // appBar: AppBar(
+          //   title: Text(widget.title),
+          // ),
+          body: ListView(
+            children: [
+              Banner(),
+              CompanyList(),
+              Align(
+                alignment: Alignment.center,
+                child: GridView(notices: _notices),
+              ),
+            ],
+          ),
+        )
+      ],
+    ));
+  }
+}
+
+class GridView extends StatelessWidget {
+  const GridView({
+    Key? key,
+    required List<Notice> notices,
+  })  : _notices = notices,
+        super(key: key);
+
+  final List<Notice> _notices;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 850,
+      padding: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Banner(),
-          CompanyList(),
-          NoticeItem(notices: notices),
-          Spacer(),
+          ResponsiveGridList(
+            desiredItemWidth: 230,
+            minSpacing: 20,
+            scroll: false,
+            children:
+                _notices.map((notice) => NoticeItem(notice: notice)).toList(),
+          )
         ],
       ),
     );
@@ -74,10 +136,10 @@ class _MyHomePageState extends State<MyHomePage> {
 class NoticeItem extends StatefulWidget {
   const NoticeItem({
     Key? key,
-    required this.notices,
+    required this.notice,
   }) : super(key: key);
 
-  final List<Notice> notices;
+  final Notice notice;
 
   @override
   State<NoticeItem> createState() => _NoticeItemState();
@@ -93,23 +155,34 @@ class _NoticeItemState extends State<NoticeItem> {
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 200),
-          height: 100 * scale,
-          child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: Center(
-              child: Column(
-                children: [
-                  Text(widget.notices[0].title),
-                  SizedBox(height: 15),
-                  Image.asset(
-                    'assets/' +
-                        widget.notices[0].company.getName().toLowerCase() +
-                        '.png',
-                    width: 70,
-                    fit: BoxFit.fitWidth,
-                  )
-                ],
+          height: 230,
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 12,
+                  spreadRadius: 3,
+                  color: Colors.grey.withOpacity(0.4),
+                )
+              ],
+            ),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                child: Column(
+                  children: [
+                    Text(widget.notice.title),
+                    SizedBox(height: 15),
+                    Image.asset(
+                      'assets/' +
+                          widget.notice.company.getName().toLowerCase() +
+                          '.png',
+                      width: 70,
+                      fit: BoxFit.fitWidth,
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -120,9 +193,8 @@ class _NoticeItemState extends State<NoticeItem> {
       },
       onHover: (isHovering) {
         if (isHovering) {
-          print("DD!!");
           setState(() {
-            scale = 1.3;
+            scale = 1.2;
           });
         } else {
           setState(() {
