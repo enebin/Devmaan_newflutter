@@ -36,15 +36,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _isWeb = false;
-  List<Notice> _notices = [
-    Notice(
-      company: Company(name: "Naver"),
-      title: "귀여운 뉴비 모바일 개발자 모집",
-      date: "2021-2022",
-      link: "www.naver.com",
-      year: Year(year: 0),
-    )
-  ];
+  List<Notice> _notices = [];
 
   @override
   void initState() {
@@ -92,15 +84,35 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               Banner(),
               CompanyList(),
-              Align(
-                alignment: Alignment.center,
-                child: GridView(notices: _notices),
-              ),
+              if (_notices.isNotEmpty) ...[
+                Align(
+                  alignment: Alignment.center,
+                  child: GridView(notices: _notices),
+                ),
+              ] else ...[
+                ProgressView()
+              ],
             ],
           ),
         )
       ],
     ));
+  }
+}
+
+class ProgressView extends StatelessWidget {
+  const ProgressView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(120),
+      child: Center(
+        child: const CircularProgressIndicator(),
+      ),
+    );
   }
 }
 
@@ -152,15 +164,34 @@ class _NoticeItemState extends State<NoticeItem> {
 
   @override
   Widget build(BuildContext context) {
+    Widget card = Card(
+      elevation: isHovering ? 15 : 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Center(
+        child: Column(
+          children: [
+            Spacer(),
+            Text(widget.notice.title),
+            SizedBox(height: 15),
+            Image.asset(
+              'assets/' +
+                  widget.notice.company.getName().toLowerCase() +
+                  '.png',
+              width: 70,
+              fit: BoxFit.fitWidth,
+            ),
+            Spacer(),
+          ],
+        ),
+      ),
+    );
+
     return InkWell(
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
           height: 230,
-          // transform: isHovering
-          //     ? (Matrix4.identity()..scale(1.1, 1.1))
-          //     : Matrix4.identity(),
           child: Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -171,26 +202,7 @@ class _NoticeItemState extends State<NoticeItem> {
                 )
               ],
             ),
-            child: Card(
-              elevation: isHovering ? 15 : 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              child: Center(
-                child: Column(
-                  children: [
-                    Text(widget.notice.title),
-                    SizedBox(height: 15),
-                    Image.asset(
-                      'assets/' +
-                          widget.notice.company.getName().toLowerCase() +
-                          '.png',
-                      width: 70,
-                      fit: BoxFit.fitWidth,
-                    )
-                  ],
-                ),
-              ),
-            ),
+            child: card,
           ),
         ),
       ),
@@ -235,22 +247,27 @@ class CompanyList extends StatelessWidget {
         ],
       ),
       height: 100,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _iconAssets.length,
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        itemBuilder: (BuildContext context, int index) {
-          return Row(
-            children: [
-              Image.asset(
-                _iconAssets[index],
-                width: 80,
-                fit: BoxFit.fitWidth,
-              ),
-              SizedBox(width: 20)
-            ],
-          );
-        },
+      child: Center(
+        child: ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: _iconAssets.length,
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          itemBuilder: (BuildContext context, int index) {
+            return Row(
+              children: [
+                Center(
+                  child: Image.asset(
+                    _iconAssets[index],
+                    width: 80,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+                SizedBox(width: 20)
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -263,38 +280,60 @@ class Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      child: Stack(fit: StackFit.loose, children: [
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.center,
-            child: Image.asset(
-              'assets/background.jpg',
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-          ),
+    return Container(
+      height: 400,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: const FractionalOffset(0.0, 0.0),
+          end: const FractionalOffset(1.0, 1.0),
+          colors: <Color>[
+            const Color(0xFf3366FF),
+            const Color(0xFF00CCff),
+          ],
+          stops: <double>[0.0, 1.0],
+          tileMode: TileMode.clamp,
         ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  "Top 7 채용 공고는\n 여기 다 모여있음!",
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-              ],
-            ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text(
+            "Top 7 채용 공고\n 모아 놓음",
+            style: TextStyle(
+                fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-        )
-      ]),
+        ],
+      ),
+      // child: Stack(fit: StackFit.loose, children: [
+      //   Positioned.fill(
+      //     child: Align(
+      //       alignment: Alignment.center,
+      //       child: Image.asset(
+      //         'assets/background.jpg',
+      //         width: double.infinity,
+      //         height: 200,
+      //         fit: BoxFit.fill,
+      //       ),
+      //     ),
+      //   ),
+      //   Positioned.fill(
+      //     child: Align(
+      //       alignment: Alignment.center,
+      //       child: Column(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         children: const [
+      //           Text(
+      //             "Top 7 채용 공고\n 모아 놓음",
+      //             style: TextStyle(
+      //                 fontSize: 25,
+      //                 fontWeight: FontWeight.bold,
+      //                 color: Colors.white),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   )
+      // ]),
     );
   }
 }
