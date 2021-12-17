@@ -87,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // appBar: AppBar(
           //   title: Text(widget.title),
           // ),
+          backgroundColor: Colors.grey.withOpacity(0.1),
           body: ListView(
             children: [
               Banner(),
@@ -147,6 +148,7 @@ class NoticeItem extends StatefulWidget {
 
 class _NoticeItemState extends State<NoticeItem> {
   double scale = 1.0;
+  bool isHovering = false;
 
   @override
   Widget build(BuildContext context) {
@@ -154,19 +156,23 @@ class _NoticeItemState extends State<NoticeItem> {
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
+          duration: Duration(milliseconds: 150),
           height: 230,
+          // transform: isHovering
+          //     ? (Matrix4.identity()..scale(1.1, 1.1))
+          //     : Matrix4.identity(),
           child: Container(
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
                   blurRadius: 12,
-                  spreadRadius: 3,
+                  spreadRadius: 5,
                   color: Colors.grey.withOpacity(0.4),
                 )
               ],
             ),
             child: Card(
+              elevation: isHovering ? 15 : 0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
               child: Center(
@@ -191,14 +197,15 @@ class _NoticeItemState extends State<NoticeItem> {
       onTap: () {
         print("SSS");
       },
-      onHover: (isHovering) {
-        if (isHovering) {
+      onHover: (on) {
+        if (on) {
           setState(() {
-            scale = 1.2;
+            isHovering = true;
           });
         } else {
           setState(() {
-            scale = 1.0;
+            isHovering = false;
+            on = false;
           });
         }
       },
