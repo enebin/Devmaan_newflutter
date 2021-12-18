@@ -32,17 +32,11 @@ class Year {
   final int year;
   Year({required this.year});
 
-  void debugger() {
-    print(year.runtimeType);
-  }
-
   int getRawYear() {
     return year;
   }
 
   Color getColor() {
-    print(this.year);
-
     switch (year) {
       case 0:
         return const Color.fromRGBO(246, 226, 78, 1);

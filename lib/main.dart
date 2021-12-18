@@ -1,13 +1,18 @@
 import 'util.dart';
-import 'model/notice.dart';
+import './model/notice.dart';
+import './widget/banner.dart' as banner;
+import './widget/company_list.dart';
+import './widget/grid_view.dart' as grid;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+enum SortBy { company, title, date, year }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -36,19 +41,56 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _isWeb = false;
+  ScrollController controller;
   List<Notice> _notices = [];
+  List<Notice> _lazyNotices = [];
+  List<String> filters = [];
+  List<String> companyFilter = [];
+
+  List<Notice> get _filteredNotices {
+    return _notices
+        .where((element) {
+          if (companyFilter.isEmpty) {
+            return true;
+          } else {
+            return companyFilter.contains(element.company.name.toLowerCase());
+          }
+        })
+        .toList()
+        .where((element) {
+          bool isIn = true;
+          if (filters.isEmpty) {
+            return true;
+          } else {
+            for (String filter in filters) {
+              isIn = isIn &&
+                  (element.title.toLowerCase().contains(filter.toLowerCase()));
+            }
+          }
+          return isIn;
+        })
+        .toList();
+  }
 
   @override
   void initState() {
     super.initState();
     Util util = Util();
+    controller = ScrollController()..addListener(_scrollListener);
+
     setState(() {
       _isWeb = util.checkIsWeb();
       fetchData();
     });
   }
 
-  void fetchData() {
+  @override
+  void dispose() {
+    controller.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void fetchData({bool shuffle = true}) {
     final databaseReference = FirebaseDatabase.instance.reference();
 
     databaseReference.child('notices').once().then((DataSnapshot snapshot) {
@@ -58,9 +100,65 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _notices = List<Notice>.from(
             data.values.map((notice) => Notice.fromJson(notice)));
+        if (shuffle) {
+          _notices.shuffle();
+        }
       });
       print("[System] ${_notices.length} notices fetched.");
     });
+  }
+
+  void updateCompanyFilter(Company company) {
+    var loc = companyFilter.indexOf(company.name);
+    if (loc != -1) {
+      setState(() {
+        companyFilter.removeAt(loc);
+      });
+    } else {
+      setState(() {
+        companyFilter.add(company.name);
+      });
+    }
+  }
+
+  void updateFilter(String filter) {
+    var loc = filters.indexOf(filter);
+    if (loc != -1) {
+      setState(() {
+        filters.removeAt(loc);
+      });
+    } else {
+      setState(() {
+        filters.add(filter);
+      });
+    }
+  }
+
+  void sortByType(SortBy condition) {
+    if (condition == SortBy.company) {
+      setState(() {
+        _notices
+            .sort((a, b) => a.company.getName().compareTo(b.company.getName()));
+      });
+    } else if (condition == SortBy.title) {
+      setState(() {
+        _notices.sort((a, b) => a.title.compareTo(b.title));
+      });
+    } else if (condition == SortBy.year) {
+      setState(() {
+        _notices
+            .sort((a, b) => a.year.getRawYear().compareTo(b.year.getRawYear()));
+      });
+    } else if (condition == SortBy.date) {}
+  }
+
+  void _scrollListener() {
+    print(controller.position.extentAfter);
+    if (controller.position.extentAfter < 500) {
+      setState(() {
+        _lazyNotices.addAll(_notices);
+      });
+    }
   }
 
   @override
@@ -70,6 +168,13 @@ class _MyHomePageState extends State<MyHomePage> {
     /*24 is for notification bar on Android*/
     final double itemHeight = size.height / 2;
     final double itemWidth = size.width / 2;
+
+    Widget ProgressView = Container(
+      padding: EdgeInsets.all(120),
+      child: const Center(
+        child: CircularProgressIndicator(color: Colors.blue),
+      ),
+    );
 
     return Material(
         child: PageView(
@@ -82,258 +187,20 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Colors.grey.withOpacity(0.1),
           body: ListView(
             children: [
-              Banner(),
-              CompanyList(),
+              banner.Banner(),
+              CompanyList(onTap: updateCompanyFilter),
               if (_notices.isNotEmpty) ...[
                 Align(
                   alignment: Alignment.center,
-                  child: GridView(notices: _notices),
+                  child: grid.GridView(notices: _filteredNotices),
                 ),
               ] else ...[
-                ProgressView()
+                ProgressView,
               ],
             ],
           ),
         )
       ],
     ));
-  }
-}
-
-class ProgressView extends StatelessWidget {
-  const ProgressView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(120),
-      child: Center(
-        child: const CircularProgressIndicator(),
-      ),
-    );
-  }
-}
-
-class GridView extends StatelessWidget {
-  const GridView({
-    Key? key,
-    required List<Notice> notices,
-  })  : _notices = notices,
-        super(key: key);
-
-  final List<Notice> _notices;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 850,
-      padding: EdgeInsets.all(15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ResponsiveGridList(
-            desiredItemWidth: 230,
-            minSpacing: 20,
-            scroll: false,
-            children:
-                _notices.map((notice) => NoticeItem(notice: notice)).toList(),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class NoticeItem extends StatefulWidget {
-  const NoticeItem({
-    Key? key,
-    required this.notice,
-  }) : super(key: key);
-
-  final Notice notice;
-
-  @override
-  State<NoticeItem> createState() => _NoticeItemState();
-}
-
-class _NoticeItemState extends State<NoticeItem> {
-  double scale = 1.0;
-  bool isHovering = false;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget card = Card(
-      elevation: isHovering ? 15 : 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Center(
-        child: Column(
-          children: [
-            Spacer(),
-            Text(widget.notice.title),
-            SizedBox(height: 15),
-            Image.asset(
-              'assets/' +
-                  widget.notice.company.getName().toLowerCase() +
-                  '.png',
-              width: 70,
-              fit: BoxFit.fitWidth,
-            ),
-            Spacer(),
-          ],
-        ),
-      ),
-    );
-
-    return InkWell(
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 150),
-          height: 230,
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 12,
-                  spreadRadius: 5,
-                  color: Colors.grey.withOpacity(0.4),
-                )
-              ],
-            ),
-            child: card,
-          ),
-        ),
-      ),
-      onTap: () {
-        print("SSS");
-      },
-      onHover: (on) {
-        if (on) {
-          setState(() {
-            isHovering = true;
-          });
-        } else {
-          setState(() {
-            isHovering = false;
-            on = false;
-          });
-        }
-      },
-    );
-  }
-}
-
-class CompanyList extends StatelessWidget {
-  final List<String> _iconAssets = [
-    'assets/coupang.png',
-    'assets/kakao.png',
-    'assets/line.png',
-    'assets/naver.png'
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 5,
-              offset: Offset(0, 3))
-        ],
-      ),
-      height: 100,
-      child: Center(
-        child: ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemCount: _iconAssets.length,
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          itemBuilder: (BuildContext context, int index) {
-            return Row(
-              children: [
-                Center(
-                  child: Image.asset(
-                    _iconAssets[index],
-                    width: 80,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                SizedBox(width: 20)
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class Banner extends StatelessWidget {
-  const Banner({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 400,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(1.0, 1.0),
-          colors: <Color>[
-            const Color(0xFf3366FF),
-            const Color(0xFF00CCff),
-          ],
-          stops: <double>[0.0, 1.0],
-          tileMode: TileMode.clamp,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text(
-            "Top 7 채용 공고\n 모아 놓음",
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ],
-      ),
-      // child: Stack(fit: StackFit.loose, children: [
-      //   Positioned.fill(
-      //     child: Align(
-      //       alignment: Alignment.center,
-      //       child: Image.asset(
-      //         'assets/background.jpg',
-      //         width: double.infinity,
-      //         height: 200,
-      //         fit: BoxFit.fill,
-      //       ),
-      //     ),
-      //   ),
-      //   Positioned.fill(
-      //     child: Align(
-      //       alignment: Alignment.center,
-      //       child: Column(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: const [
-      //           Text(
-      //             "Top 7 채용 공고\n 모아 놓음",
-      //             style: TextStyle(
-      //                 fontSize: 25,
-      //                 fontWeight: FontWeight.bold,
-      //                 color: Colors.white),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //   )
-      // ]),
-    );
   }
 }
