@@ -8,6 +8,44 @@ class Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget TextAndImage = Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                "Big 5 개발자 채용 공고",
+                style: TextStyle(
+                    fontSize: 35,
+                    fontFamily: MyFontFamily.eliceBold,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              Text(
+                "여기 다 모아 놨어!",
+                style: TextStyle(
+                    fontSize: 50,
+                    fontFamily: MyFontFamily.eliceBold,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Image.asset(
+            'assets/search.png',
+            width: 250,
+            fit: BoxFit.fitWidth,
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
     return Container(
       height: 400,
       decoration: const BoxDecoration(
@@ -23,76 +61,30 @@ class Banner extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(25),
-        child: Row(
+        padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+        child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "Big 5 개발자 채용 공고",
-                    style: TextStyle(
-                        fontSize: 35,
-                        fontFamily: MyFontFamily.eliceBold,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+            TextAndImage,
+            Positioned.fill(
+                child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
                   ),
-                  Text(
-                    "여기 다 모아 놨어!",
-                    style: TextStyle(
-                        fontSize: 50,
-                        fontFamily: MyFontFamily.eliceBold,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Image.asset(
-                'assets/search.png',
-                width: 250,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            const Spacer(),
+                  child: Container(
+                    child: Text("원하는 회사만 골라서 볼 수 있어요!",
+                        style: TextStyle(
+                          fontFamily: MyFontFamily.eliceBold,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  )),
+            ))
           ],
         ),
       ),
-      // child: Stack(fit: StackFit.loose, children: [
-      //   Positioned.fill(
-      //     child: Align(
-      //       alignment: Alignment.center,
-      //       child: Image.asset(
-      //         'assets/background.jpg',
-      //         width: double.infinity,
-      //         height: 200,
-      //         fit: BoxFit.fill,
-      //       ),
-      //     ),
-      //   ),
-      //   Positioned.fill(
-      //     child: Align(
-      //       alignment: Alignment.center,
-      //       child: Column(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: const [
-      //           Text(
-      //             "Top 7 채용 공고\n 모아 놓음",
-      //             style: TextStyle(
-      //                 fontSize: 25,
-      //                 fontWeight: FontWeight.bold,
-      //                 color: Colors.white),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //   )
-      // ]),
     );
   }
 }
