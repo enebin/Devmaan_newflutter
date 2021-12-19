@@ -201,6 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               banner.Banner(),
               CompanyList(onTap: updateCompanyFilter),
+              Row(
+                children: [TextButton(onPressed: onPressed, child: child)],
+              ),
               if (_notices.isNotEmpty) ...[
                 Align(
                   alignment: Alignment.center,
