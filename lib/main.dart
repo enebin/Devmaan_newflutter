@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'util.dart';
 import './model/notice.dart';
 import './widget/banner.dart' as banner;
@@ -41,14 +43,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _isWeb = false;
-  ScrollController controller;
+
+  ScrollController controller = ScrollController();
+  final _loadThisMuch = 20;
+  int _loadCount = 1;
+
   List<Notice> _notices = [];
-  List<Notice> _lazyNotices = [];
   List<String> filters = [];
   List<String> companyFilter = [];
 
   List<Notice> get _filteredNotices {
-    return _notices
+    final filtered = _notices
         .where((element) {
           if (companyFilter.isEmpty) {
             return true;
@@ -70,6 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
           return isIn;
         })
         .toList();
+
+    return filtered.sublist(
+        0, min(filtered.length, (_loadCount + 1) * _loadThisMuch));
   }
 
   @override
@@ -113,10 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
     if (loc != -1) {
       setState(() {
         companyFilter.removeAt(loc);
+        _loadCount = 0;
       });
     } else {
       setState(() {
         companyFilter.add(company.name);
+        _loadCount = 0;
       });
     }
   }
@@ -153,10 +163,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _scrollListener() {
-    print(controller.position.extentAfter);
-    if (controller.position.extentAfter < 500) {
+    if (controller.position.extentAfter < 100 &&
+        !(_loadCount > _notices.length / _loadThisMuch + 1)) {
+      print(_loadCount);
       setState(() {
-        _lazyNotices.addAll(_notices);
+        _loadCount += 1;
       });
     }
   }
@@ -186,6 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // ),
           backgroundColor: Colors.grey.withOpacity(0.1),
           body: ListView(
+            controller: controller,
             children: [
               banner.Banner(),
               CompanyList(onTap: updateCompanyFilter),
