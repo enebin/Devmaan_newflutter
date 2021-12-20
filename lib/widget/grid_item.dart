@@ -4,6 +4,7 @@ import '../model/notice.dart';
 import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class NoticeItem extends StatefulWidget {
   const NoticeItem({
@@ -40,17 +41,15 @@ class _NoticeItemState extends State<NoticeItem> {
             Spacer(),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  // 공고 제목
-                  widget.notice.title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontFamily: MyFontFamily.nanumBold,
-                  ),
-                  textAlign: TextAlign.center,
+              child: AutoSizeText(
+                // 공고 제목
+                widget.notice.title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontFamily: MyFontFamily.nanumBold,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 3,
               ),
             ),
             const SizedBox(height: 15),

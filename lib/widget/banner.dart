@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../font.dart';
 
+import 'package:auto_size_text/auto_size_text.dart';
+
 class Banner extends StatelessWidget {
   const Banner({
     Key? key,
@@ -16,21 +18,23 @@ class Banner extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              Text(
+              AutoSizeText(
                 "Big 5 개발자 채용 공고",
                 style: TextStyle(
                     fontSize: 35,
                     fontFamily: MyFontFamily.eliceBold,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
+                maxLines: 1,
               ),
-              Text(
+              AutoSizeText(
                 "여기 다 모아 놨어!",
                 style: TextStyle(
                     fontSize: 50,
                     fontFamily: MyFontFamily.eliceBold,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
+                maxLines: 1,
               ),
             ],
           ),
@@ -62,30 +66,30 @@ class Banner extends StatelessWidget {
       ),
       child: Container(
         padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Stack(
-            children: [
-              TextAndImage,
-              Positioned.fill(
-                  child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
+        child: Stack(
+          children: [
+            TextAndImage,
+            Positioned(
+                child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+                  ),
+                  child: Container(
+                    child: AutoSizeText(
+                      "원하는 회사만 골라서 볼 수 있어요!",
+                      style: TextStyle(
+                        fontFamily: MyFontFamily.eliceBold,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
                     ),
-                    child: Container(
-                      child: Text("원하는 회사만 골라서 볼 수 있어요!",
-                          style: TextStyle(
-                            fontFamily: MyFontFamily.eliceBold,
-                            fontWeight: FontWeight.bold,
-                          )),
-                    )),
-              ))
-            ],
-          ),
+                  )),
+            ))
+          ],
         ),
       ),
     );
