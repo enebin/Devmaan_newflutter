@@ -62,27 +62,30 @@ class Banner extends StatelessWidget {
       ),
       child: Container(
         padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-        child: Stack(
-          children: [
-            TextAndImage,
-            Positioned.fill(
-                child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.white,
-                  ),
-                  child: Container(
-                    child: Text("원하는 회사만 골라서 볼 수 있어요!",
-                        style: TextStyle(
-                          fontFamily: MyFontFamily.eliceBold,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  )),
-            ))
-          ],
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Stack(
+            children: [
+              TextAndImage,
+              Positioned.fill(
+                  child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                    ),
+                    child: Container(
+                      child: Text("원하는 회사만 골라서 볼 수 있어요!",
+                          style: TextStyle(
+                            fontFamily: MyFontFamily.eliceBold,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    )),
+              ))
+            ],
+          ),
         ),
       ),
     );

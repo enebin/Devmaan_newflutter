@@ -44,12 +44,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _isWeb = false;
 
-  ScrollController controller = ScrollController();
-  final _loadThisMuch = 20;
+  ScrollController scrollController = ScrollController();
+  final _loadThisMuch = 21;
   int _loadCount = 1;
 
+  TextEditingController textController = TextEditingController();
+
   List<Notice> _notices = [];
-  List<String> filters = [];
+  String searchFilter = "";
   List<String> companyFilter = [];
 
   List<Notice> get _filteredNotices {
@@ -64,15 +66,13 @@ class _MyHomePageState extends State<MyHomePage> {
         .toList()
         .where((element) {
           bool isIn = true;
-          if (filters.isEmpty) {
+          if (searchFilter == "") {
             return true;
           } else {
-            for (String filter in filters) {
-              isIn = isIn &&
-                  (element.title.toLowerCase().contains(filter.toLowerCase()));
-            }
+            return element.title
+                .toLowerCase()
+                .contains(searchFilter.toLowerCase());
           }
-          return isIn;
         })
         .toList();
 
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Util util = Util();
-    controller = ScrollController()..addListener(_scrollListener);
+    scrollController = ScrollController()..addListener(_scrollListener);
 
     setState(() {
       _isWeb = util.checkIsWeb();
@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    controller.removeListener(_scrollListener);
+    scrollController.removeListener(_scrollListener);
     super.dispose();
   }
 
@@ -131,17 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void updateFilter(String filter) {
-    var loc = filters.indexOf(filter);
-    if (loc != -1) {
-      setState(() {
-        filters.removeAt(loc);
-      });
-    } else {
-      setState(() {
-        filters.add(filter);
-      });
-    }
+  void updateSearchFilter(String filter) {
+    setState(() {
+      searchFilter = filter;
+    });
   }
 
   void sortByType(SortBy condition) {
@@ -163,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _scrollListener() {
-    if (controller.position.extentAfter < 100 &&
+    if (scrollController.position.extentAfter < 150 &&
         !(_loadCount > _notices.length / _loadThisMuch + 1)) {
       print(_loadCount);
       setState(() {
@@ -192,30 +185,151 @@ class _MyHomePageState extends State<MyHomePage> {
       scrollDirection: Axis.vertical,
       children: [
         Scaffold(
-          // appBar: AppBar(
-          //   title: Text(widget.title),
-          // ),
           backgroundColor: Colors.grey.withOpacity(0.1),
-          body: ListView(
-            controller: controller,
-            children: [
-              banner.Banner(),
-              CompanyList(onTap: updateCompanyFilter),
-              Row(
-                children: [TextButton(onPressed: onPressed, child: child)],
-              ),
-              if (_notices.isNotEmpty) ...[
-                Align(
-                  alignment: Alignment.center,
-                  child: grid.GridView(notices: _filteredNotices),
-                ),
-              ] else ...[
-                ProgressView,
+          body: Container(
+            child: ListView(
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              controller: scrollController,
+              children: [
+                banner.Banner(),
+                CompanyList(onTap: updateCompanyFilter),
+                SearchTextField(onSubmit: updateSearchFilter),
+                if (_notices.isNotEmpty) ...[
+                  Align(
+                    alignment: Alignment.center,
+                    child: grid.GridView(notices: _filteredNotices),
+                  ),
+                ] else ...[
+                  ProgressView,
+                ],
               ],
-            ],
+            ),
           ),
         )
       ],
     ));
+  }
+}
+
+class SearchTextField extends StatefulWidget {
+  SearchTextField({
+    Key? key,
+    required this.onSubmit,
+  }) : super(key: key);
+
+  void Function(String) onSubmit;
+
+  @override
+  State<SearchTextField> createState() => _SearchTextFieldState();
+}
+
+class _SearchTextFieldState extends State<SearchTextField> {
+  bool _isFocused = false;
+  String submitted = "";
+  TextEditingController textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    var SearchBar = Container(
+      width: 300,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 5,
+                spreadRadius: _isFocused ? 3 : 1,
+                color: Colors.grey.withOpacity(0.5),
+                offset: const Offset(0, 3)),
+          ]),
+      child: Focus(
+        child: TextField(
+          onSubmitted: (text) {
+            widget.onSubmit(text);
+            setState(() {
+              submitted = text;
+            });
+          },
+          keyboardType: TextInputType.text,
+          controller: textController,
+          decoration: const InputDecoration(
+            fillColor: Colors.white,
+            hoverColor: Colors.grey,
+            hintText: "채용 공고 검색",
+            hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+            border: InputBorder.none,
+            icon: Padding(
+                padding: EdgeInsets.only(left: 13),
+                child: Icon(Icons.search, size: 15)),
+          ),
+        ),
+        onFocusChange: (status) {
+          if (status) {
+            setState(() {
+              textController.text = "";
+              _isFocused = true;
+            });
+          } else {
+            setState(() {
+              _isFocused = false;
+            });
+          }
+        },
+      ),
+    );
+    return Container(
+      padding: EdgeInsets.only(top: 25),
+      child: Stack(
+        children: [
+          Positioned(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text("최신"),
+                  ),
+                  SearchBar,
+                ],
+              ),
+            ),
+          ),
+          if (submitted != "") ...[
+            Positioned(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: 100,
+                  padding: EdgeInsets.only(right: 25),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        widget.onSubmit("");
+                        textController.text = "";
+                        submitted = "";
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.cancel, size: 12),
+                        SizedBox(width: 5),
+                        Text(submitted),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ]
+        ],
+      ),
+    );
   }
 }

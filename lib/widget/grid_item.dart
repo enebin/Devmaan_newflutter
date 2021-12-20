@@ -40,16 +40,21 @@ class _NoticeItemState extends State<NoticeItem> {
             Spacer(),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Text(
-                widget.notice.title,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontFamily: MyFontFamily.nanumBold,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  // 공고 제목
+                  widget.notice.title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontFamily: MyFontFamily.nanumBold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 15),
+            // 로고
             Image.asset(
               'assets/' +
                   widget.notice.company.getName().toLowerCase() +
@@ -58,8 +63,23 @@ class _NoticeItemState extends State<NoticeItem> {
               fit: BoxFit.fitWidth,
             ),
             const SizedBox(height: 5),
+
+            // 날짜
+            Text(
+              widget.notice.date,
+              style: const TextStyle(
+                fontSize: 13,
+                fontFamily: MyFontFamily.nanumRegular,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            Spacer(),
+
+            // 태그 박스
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,7 +100,7 @@ class _NoticeItemState extends State<NoticeItem> {
                 ],
               ),
             ),
-            Spacer(),
+            SizedBox(height: 10)
           ],
         ),
       ),
