@@ -5,6 +5,7 @@ import './model/notice.dart';
 import './widget/banner.dart' as banner;
 import './widget/company_list.dart';
 import './widget/grid_view.dart' as grid;
+import './widget/search_textfield.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -137,6 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void searchResultHandler() {
+    setState(() {
+      _loadCount = 0;
+    });
+  }
+
   void sortByType(SortBy condition) {
     if (condition == SortBy.company) {
       setState(() {
@@ -194,7 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 banner.Banner(),
                 CompanyList(onTap: updateCompanyFilter),
-                SearchTextField(onSubmit: updateSearchFilter),
+                SearchTextField(
+                    onSubmit: updateSearchFilter,
+                    onDismissed: searchResultHandler),
                 if (_notices.isNotEmpty) ...[
                   Align(
                     alignment: Alignment.center,
@@ -203,133 +212,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ] else ...[
                   ProgressView,
                 ],
+                const SizedBox(height: 300)
               ],
             ),
           ),
         )
       ],
     ));
-  }
-}
-
-class SearchTextField extends StatefulWidget {
-  SearchTextField({
-    Key? key,
-    required this.onSubmit,
-  }) : super(key: key);
-
-  void Function(String) onSubmit;
-
-  @override
-  State<SearchTextField> createState() => _SearchTextFieldState();
-}
-
-class _SearchTextFieldState extends State<SearchTextField> {
-  bool _isFocused = false;
-  String submitted = "";
-  TextEditingController textController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    var SearchBar = Container(
-      width: 300,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-                blurRadius: 5,
-                spreadRadius: _isFocused ? 3 : 1,
-                color: Colors.grey.withOpacity(0.5),
-                offset: const Offset(0, 3)),
-          ]),
-      child: Focus(
-        child: TextField(
-          onSubmitted: (text) {
-            widget.onSubmit(text);
-            setState(() {
-              submitted = text;
-            });
-          },
-          keyboardType: TextInputType.text,
-          controller: textController,
-          decoration: const InputDecoration(
-            fillColor: Colors.white,
-            hoverColor: Colors.grey,
-            hintText: "채용 공고 검색",
-            hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
-            border: InputBorder.none,
-            icon: Padding(
-                padding: EdgeInsets.only(left: 13),
-                child: Icon(Icons.search, size: 15)),
-          ),
-        ),
-        onFocusChange: (status) {
-          if (status) {
-            setState(() {
-              textController.text = "";
-              _isFocused = true;
-            });
-          } else {
-            setState(() {
-              _isFocused = false;
-            });
-          }
-        },
-      ),
-    );
-    return Container(
-      padding: EdgeInsets.only(top: 25),
-      child: Stack(
-        children: [
-          Positioned(
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text("최신"),
-                  ),
-                  SearchBar,
-                ],
-              ),
-            ),
-          ),
-          if (submitted != "") ...[
-            Positioned(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  width: 100,
-                  padding: EdgeInsets.only(right: 25),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        widget.onSubmit("");
-                        textController.text = "";
-                        submitted = "";
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.cancel, size: 12),
-                        SizedBox(width: 5),
-                        Text(submitted),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ]
-        ],
-      ),
-    );
   }
 }

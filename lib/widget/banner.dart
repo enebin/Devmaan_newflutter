@@ -54,11 +54,11 @@ class Banner extends StatelessWidget {
       height: 400,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(1.0, 1.0),
+          begin: FractionalOffset(0.0, 0.0),
+          end: FractionalOffset(1.0, 1.0),
           colors: <Color>[
-            const Color(0xFf3366FF),
-            const Color(0xFF00CCff),
+            Color(0xFf3366FF),
+            Color(0xFF00CCff),
           ],
           stops: <double>[0.0, 1.0],
           tileMode: TileMode.clamp,
@@ -79,7 +79,8 @@ class Banner extends StatelessWidget {
                     color: Colors.white,
                   ),
                   child: Container(
-                    child: AutoSizeText(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: const AutoSizeText(
                       "원하는 회사만 골라서 볼 수 있어요!",
                       style: TextStyle(
                         fontFamily: MyFontFamily.eliceBold,
