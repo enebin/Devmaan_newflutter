@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'util.dart';
 import './model/notice.dart';
@@ -173,6 +174,24 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
+  // void startTimer() {
+  //   const oneSec = const Duration(seconds: 1);
+  //   _timer = Timer.periodic(
+  //     oneSec,
+  //     (Timer timer) {
+  //       if (_start == 0) {
+  //         setState(() {
+  //           timer.cancel();
+  //         });
+  //       } else {
+  //         setState(() {
+  //           _start--;
+  //         });
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
