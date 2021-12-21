@@ -4,7 +4,13 @@ import './company_item.dart';
 
 class CompanyList extends StatefulWidget {
   void Function(Company) onTap;
-  CompanyList({Key? key, required this.onTap}) : super(key: key);
+  List<String> filters;
+
+  CompanyList({
+    Key? key,
+    required this.onTap,
+    required this.filters,
+  }) : super(key: key);
 
   @override
   State<CompanyList> createState() => _CompanyListState();
@@ -15,7 +21,8 @@ class _CompanyListState extends State<CompanyList> {
     Company(name: 'naver'),
     Company(name: 'kakao'),
     Company(name: 'line'),
-    Company(name: 'coupang')
+    Company(name: 'coupang'),
+    Company(name: 'baemin')
   ];
 
   @override
@@ -39,7 +46,11 @@ class _CompanyListState extends State<CompanyList> {
           itemCount: companies.length,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           itemBuilder: (BuildContext context, int index) {
-            return CompanyItem(company: companies[index], widget: widget);
+            return CompanyItem(
+              company: companies[index],
+              widget: widget,
+              isSelected: widget.filters.contains(companies[index].name),
+            );
           },
         ),
       ),

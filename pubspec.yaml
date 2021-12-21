@@ -80,6 +80,7 @@ flutter:
     - assets/kakao.png
     - assets/line.png
     - assets/naver.png
+    - assets/baemin.png
     - assets/logo.png
     
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -78,10 +78,12 @@ class Company {
         return const Color.fromRGBO(127, 234, 127, 1);
       case 'Coupang':
         return const Color.fromRGBO(215, 50, 39, 0.8);
+      case 'Baemin':
+        return const Color.fromRGBO(215, 50, 39, 0.8);
       default:
         return Colors.red;
     }
   }
 
-  static List<String> values = ['Naver', 'Line', 'Kakao', 'Coupang'];
+  static List<String> values = ['Naver', 'Line', 'Kakao', 'Coupang', 'Baemin'];
 }

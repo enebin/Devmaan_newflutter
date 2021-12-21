@@ -7,17 +7,18 @@ class CompanyItem extends StatefulWidget {
     Key? key,
     required this.company,
     required this.widget,
+    required this.isSelected,
   }) : super(key: key);
 
   final Company company;
   final CompanyList widget;
+  final bool isSelected;
 
   @override
   State<CompanyItem> createState() => _CompanyItemState();
 }
 
 class _CompanyItemState extends State<CompanyItem> {
-  bool isSelected = false;
   bool isHovering = false;
 
   @override
@@ -39,27 +40,24 @@ class _CompanyItemState extends State<CompanyItem> {
                     width: 80,
                     fit: BoxFit.fitWidth,
                   ),
-                  isSelected
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: Column(
-                            children: [
-                              Icon(Icons.check_circle,
-                                  color: Colors.green, size: 15),
-                              Spacer(),
-                            ],
-                          ),
-                        )
-                      : Text(""),
+                  if (widget.isSelected) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Column(
+                        children: [
+                          Icon(Icons.check_circle,
+                              color: Colors.green, size: 15),
+                          Spacer(),
+                        ],
+                      ),
+                    )
+                  ]
                 ],
               ),
             ),
           ),
           onTap: () {
-            setState(() {
-              widget.widget.onTap(widget.company);
-              isSelected = isSelected ? false : true;
-            });
+            widget.widget.onTap(widget.company);
           },
           onHover: (on) {
             if (on) {

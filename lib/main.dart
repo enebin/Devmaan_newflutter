@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 // TODO: 시간 순 정렬
-// TODO: 검색 버그
 
 void main() {
   runApp(const MyApp());
@@ -192,11 +191,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Material(
         child: PageView(
+      physics:
+          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       scrollDirection: Axis.vertical,
       children: [
         Scaffold(
           floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
             onPressed: () {
+              setState(() {
+                _loadCount = 0;
+              });
               scrollController.animateTo(0,
                   duration: Duration(milliseconds: 750), curve: Curves.ease);
             },
@@ -205,12 +211,13 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Colors.grey.withOpacity(0.1),
           body: Container(
             child: ListView(
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
               controller: scrollController,
               children: [
                 banner.Banner(),
-                CompanyList(onTap: updateCompanyFilter),
+                CompanyList(
+                  onTap: updateCompanyFilter,
+                  filters: companyFilter,
+                ),
                 SearchTextField(
                     onSubmit: updateSearchFilter,
                     onDismissed: searchResultHandler),
