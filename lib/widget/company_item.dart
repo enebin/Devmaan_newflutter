@@ -36,7 +36,7 @@ class _CompanyItemState extends State<CompanyItem> {
               child: Row(
                 children: [
                   Image.asset(
-                    'assets/' + widget.company.getName().toLowerCase() + '.png',
+                    'images/' + widget.company.getName().toLowerCase() + '.png',
                     width: 80,
                     fit: BoxFit.fitWidth,
                   ),

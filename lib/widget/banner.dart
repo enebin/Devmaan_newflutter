@@ -42,7 +42,7 @@ class Banner extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(25.0),
           child: Image.asset(
-            'assets/search.png',
+            'images/search.png',
             width: 250,
             fit: BoxFit.fitWidth,
           ),

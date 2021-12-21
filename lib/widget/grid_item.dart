@@ -55,7 +55,7 @@ class _NoticeItemState extends State<NoticeItem> {
             const SizedBox(height: 15),
             // 로고
             Image.asset(
-              'assets/' +
+              'images/' +
                   widget.notice.company.getName().toLowerCase() +
                   '.png',
               width: 70,
