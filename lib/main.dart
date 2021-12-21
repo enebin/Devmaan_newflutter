@@ -11,6 +11,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+// TODO: 시간 순 정렬
+// TODO: 검색 버그
+
 void main() {
   runApp(const MyApp());
 }
@@ -192,6 +195,13 @@ class _MyHomePageState extends State<MyHomePage> {
       scrollDirection: Axis.vertical,
       children: [
         Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              scrollController.animateTo(0,
+                  duration: Duration(milliseconds: 750), curve: Curves.ease);
+            },
+            child: Icon(Icons.arrow_upward),
+          ),
           backgroundColor: Colors.grey.withOpacity(0.1),
           body: Container(
             child: ListView(
@@ -212,7 +222,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ] else ...[
                   ProgressView,
                 ],
-                const SizedBox(height: 300)
               ],
             ),
           ),

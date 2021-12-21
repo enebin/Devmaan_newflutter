@@ -37,7 +37,7 @@ class _CompanyListState extends State<CompanyList> {
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemCount: companies.length,
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           itemBuilder: (BuildContext context, int index) {
             return CompanyItem(company: companies[index], widget: widget);
           },

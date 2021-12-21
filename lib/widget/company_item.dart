@@ -3,7 +3,7 @@ import './company_list.dart';
 import '../model/notice.dart';
 
 class CompanyItem extends StatefulWidget {
-  const CompanyItem({
+  CompanyItem({
     Key? key,
     required this.company,
     required this.widget,
@@ -17,8 +17,8 @@ class CompanyItem extends StatefulWidget {
 }
 
 class _CompanyItemState extends State<CompanyItem> {
-  bool isHovering = false;
   bool isSelected = false;
+  bool isHovering = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +56,10 @@ class _CompanyItemState extends State<CompanyItem> {
             ),
           ),
           onTap: () {
-            widget.widget.onTap(widget.company);
-            isSelected = isSelected ? false : true;
+            setState(() {
+              widget.widget.onTap(widget.company);
+              isSelected = isSelected ? false : true;
+            });
           },
           onHover: (on) {
             if (on) {
