@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:responsive_grid/responsive_grid.dart';
 
 import 'package:devmaan_newflutter/model/notice.dart';
@@ -15,14 +16,16 @@ class GridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+
     return Container(
-      width: 850,
+      width: queryData.size.width * 0.75,
       padding: EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ResponsiveGridList(
-            desiredItemWidth: 230,
+            desiredItemWidth: 220,
             minSpacing: 20,
             scroll: false,
             children:

@@ -214,44 +214,49 @@ class _MyHomePageState extends State<MyHomePage> {
           const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       scrollDirection: Axis.vertical,
       children: [
-        Scaffold(
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-            onPressed: () {
-              setState(() {
-                _loadCount = 0;
-              });
-              scrollController.animateTo(0,
-                  duration: Duration(milliseconds: 750), curve: Curves.ease);
-            },
-            child: Icon(Icons.arrow_upward),
-          ),
-          backgroundColor: Colors.grey.withOpacity(0.1),
-          body: Container(
-            child: ListView(
-              controller: scrollController,
-              children: [
-                banner.Banner(),
-                CompanyList(
-                  onTap: updateCompanyFilter,
-                  filters: companyFilter,
+        GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                onPressed: () {
+                  scrollController.animateTo(0,
+                      duration: Duration(milliseconds: 750),
+                      curve: Curves.ease);
+                  Future.delayed(const Duration(milliseconds: 750), () {
+                    setState(() {
+                      _loadCount = 0;
+                    });
+                  });
+                },
+                child: Icon(Icons.arrow_upward),
+              ),
+              backgroundColor: Colors.grey.withOpacity(0.1),
+              body: Container(
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    banner.Banner(),
+                    CompanyList(
+                      onTap: updateCompanyFilter,
+                      filters: companyFilter,
+                    ),
+                    SearchTextField(
+                        onSubmit: updateSearchFilter,
+                        onDismissed: searchResultHandler),
+                    if (_notices.isNotEmpty) ...[
+                      Align(
+                        alignment: Alignment.center,
+                        child: grid.GridView(notices: _filteredNotices),
+                      ),
+                    ] else ...[
+                      ProgressView,
+                    ],
+                  ],
                 ),
-                SearchTextField(
-                    onSubmit: updateSearchFilter,
-                    onDismissed: searchResultHandler),
-                if (_notices.isNotEmpty) ...[
-                  Align(
-                    alignment: Alignment.center,
-                    child: grid.GridView(notices: _filteredNotices),
-                  ),
-                ] else ...[
-                  ProgressView,
-                ],
-              ],
-            ),
-          ),
-        )
+              ),
+            ))
       ],
     ));
   }

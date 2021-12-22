@@ -10,18 +10,28 @@ class Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    const _minimumWindowSize = 800;
+
+    double responsiveSize(double size) {
+      return queryData.size.width < _minimumWindowSize
+          ? size * queryData.size.width / _minimumWindowSize
+          : size;
+    }
+
     Widget TextAndImage = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               AutoSizeText(
                 "Big 5 개발자 채용 공고",
                 style: TextStyle(
-                    fontSize: 35,
+                    fontSize: responsiveSize(35),
                     fontFamily: MyFontFamily.eliceBold,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
@@ -30,7 +40,7 @@ class Banner extends StatelessWidget {
               AutoSizeText(
                 "여기 다 모아 놨어!",
                 style: TextStyle(
-                    fontSize: 50,
+                    fontSize: responsiveSize(50),
                     fontFamily: MyFontFamily.eliceBold,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
@@ -43,15 +53,41 @@ class Banner extends StatelessWidget {
           padding: const EdgeInsets.all(25.0),
           child: Image.asset(
             'images/search.png',
-            width: 250,
+            width: queryData.size.width < _minimumWindowSize ? 0 : 250,
             fit: BoxFit.fitWidth,
           ),
         ),
-        const Spacer(),
+        // const Spacer(),
       ],
     );
+
+    Widget Info = Positioned(
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.white,
+            ),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: AutoSizeText(
+                "원하는 회사만 골라서 볼 수 있어요!",
+                style: TextStyle(
+                  fontFamily: MyFontFamily.eliceBold,
+                  fontWeight: FontWeight.bold,
+                  fontSize: responsiveSize(15),
+                ),
+                maxLines: 1,
+              ),
+            )),
+      ),
+    );
+
+    // 배너
     return Container(
-      height: 400,
+      height: responsiveSize(400),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: FractionalOffset(0.0, 0.0),
@@ -69,27 +105,7 @@ class Banner extends StatelessWidget {
         child: Stack(
           children: [
             TextAndImage,
-            Positioned(
-                child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.white,
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: const AutoSizeText(
-                      "원하는 회사만 골라서 볼 수 있어요!",
-                      style: TextStyle(
-                        fontFamily: MyFontFamily.eliceBold,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                    ),
-                  )),
-            ))
+            Info,
           ],
         ),
       ),
