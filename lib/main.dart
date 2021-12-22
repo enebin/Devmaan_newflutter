@@ -12,7 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-// TODO: 시간 순 정렬
+// TODO: 정렬
+// TODO: 회사 로고 크기다듬기
 
 void main() {
   runApp(const MyApp());

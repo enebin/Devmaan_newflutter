@@ -23,6 +23,15 @@ class _CompanyItemState extends State<CompanyItem> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    const _minimumWindowSize = 800;
+
+    double responsiveSize(double size) {
+      return queryData.size.width < _minimumWindowSize
+          ? size * queryData.size.width / _minimumWindowSize
+          : size;
+    }
+
     return Row(
       children: [
         InkWell(
@@ -37,16 +46,16 @@ class _CompanyItemState extends State<CompanyItem> {
                 children: [
                   Image.asset(
                     'images/' + widget.company.getName().toLowerCase() + '.png',
-                    width: 80,
+                    width: responsiveSize(80),
                     fit: BoxFit.fitWidth,
                   ),
                   if (widget.isSelected) ...[
                     Padding(
-                      padding: const EdgeInsets.only(top: 30.0),
+                      padding: EdgeInsets.only(top: responsiveSize(30)),
                       child: Column(
                         children: [
                           Icon(Icons.check_circle,
-                              color: Colors.green, size: 15),
+                              color: Colors.green, size: responsiveSize(15)),
                           Spacer(),
                         ],
                       ),

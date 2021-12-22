@@ -65,9 +65,9 @@ class Banner extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomLeft,
         child: Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(responsiveSize(10)),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(responsiveSize(15)),
               color: Colors.white,
             ),
             child: Container(

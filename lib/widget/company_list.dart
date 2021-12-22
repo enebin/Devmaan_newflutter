@@ -27,6 +27,15 @@ class _CompanyListState extends State<CompanyList> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    const _minimumWindowSize = 800;
+
+    double responsiveSize(double size) {
+      return queryData.size.width < _minimumWindowSize
+          ? size * queryData.size.width / _minimumWindowSize
+          : size;
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -38,7 +47,7 @@ class _CompanyListState extends State<CompanyList> {
               offset: Offset(0, 3))
         ],
       ),
-      height: 100,
+      height: responsiveSize(100),
       child: Center(
         child: ListView.builder(
           shrinkWrap: true,
