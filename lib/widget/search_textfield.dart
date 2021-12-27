@@ -4,11 +4,11 @@ class SearchTextField extends StatefulWidget {
   SearchTextField({
     Key? key,
     required this.onSubmit,
-    required this.onDismissed,
+    required this.onDismiss,
   }) : super(key: key);
 
   void Function(String) onSubmit;
-  VoidCallback onDismissed;
+  VoidCallback onDismiss;
 
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
@@ -88,24 +88,14 @@ class _SearchTextFieldState extends State<SearchTextField> {
         children: [
           Positioned(
             child: Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text("최신"),
-                  ),
-                  SearchBar,
-                ],
-              ),
+              alignment: Alignment.center,
+              child: SearchBar,
             ),
           ),
           if (submitted != "") ...[
             Positioned(
               child: Align(
-                alignment: Alignment.centerRight,
+                alignment: Alignment.center,
                 child: Container(
                   width: 150,
                   padding: EdgeInsets.only(right: 25),
@@ -116,7 +106,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
                     onPressed: () {
                       setState(() {
                         widget.onSubmit("");
-                        widget.onDismissed;
+                        widget.onDismiss;
                         textController.text = "";
                         submitted = "";
                       });

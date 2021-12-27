@@ -7,6 +7,7 @@ import './widget/banner.dart' as banner;
 import './widget/company_list.dart';
 import './widget/grid_view.dart' as grid;
 import './widget/search_textfield.dart';
+import './widget/sort_button.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Notice> _notices = [];
   String searchFilter = "";
   List<String> companyFilter = [];
-
   List<Notice> get _filteredNotices {
     final filtered = _notices
         .where((element) {
@@ -160,6 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     } else if (condition == SortBy.year) {
       setState(() {
+        print("Sort by year");
         _notices
             .sort((a, b) => a.year.getRawYear().compareTo(b.year.getRawYear()));
       });
@@ -197,10 +198,20 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
-    /*24 is for notification bar on Android*/
-    final double itemHeight = size.height / 2;
-    final double itemWidth = size.width / 2;
+    Widget FloatingButton = FloatingActionButton(
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+      onPressed: () {
+        scrollController.animateTo(0,
+            duration: Duration(milliseconds: 750), curve: Curves.ease);
+        Future.delayed(const Duration(milliseconds: 750), () {
+          setState(() {
+            _loadCount = 0;
+          });
+        });
+      },
+      child: Icon(Icons.arrow_upward),
+    );
 
     Widget ProgressView = Container(
       padding: EdgeInsets.all(120),
@@ -218,21 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
         GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Scaffold(
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                onPressed: () {
-                  scrollController.animateTo(0,
-                      duration: Duration(milliseconds: 750),
-                      curve: Curves.ease);
-                  Future.delayed(const Duration(milliseconds: 750), () {
-                    setState(() {
-                      _loadCount = 0;
-                    });
-                  });
-                },
-                child: Icon(Icons.arrow_upward),
-              ),
+              floatingActionButton: FloatingButton,
               backgroundColor: Colors.grey.withOpacity(0.1),
               body: Container(
                 child: ListView(
@@ -244,8 +241,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       filters: companyFilter,
                     ),
                     SearchTextField(
-                        onSubmit: updateSearchFilter,
-                        onDismissed: searchResultHandler),
+                      onSubmit: updateSearchFilter,
+                      onDismiss: searchResultHandler,
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SortButton(
+                          onTap: sortByType,
+                          sortType: SortBy.year,
+                        ),
+                        SizedBox(width: 15),
+                        SortButton(
+                          onTap: sortByType,
+                          sortType: SortBy.date,
+                        ),
+                      ],
+                    ),
                     if (_notices.isNotEmpty) ...[
                       Align(
                         alignment: Alignment.center,

@@ -19,7 +19,7 @@ class GridView extends StatelessWidget {
     MediaQueryData queryData = MediaQuery.of(context);
 
     return Container(
-      width: queryData.size.width * 0.75,
+      width: queryData.size.width * 0.7,
       padding: EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
