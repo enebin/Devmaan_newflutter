@@ -4,6 +4,7 @@ class Notice {
   final Company company;
   final String title;
   final String date;
+  final List<DateTime> parsedDate;
   final String link;
   final Year year;
   bool like;
@@ -12,6 +13,7 @@ class Notice {
     required this.company,
     required this.title,
     required this.date,
+    required this.parsedDate,
     required this.link,
     required this.year,
     this.like = false,
@@ -22,6 +24,20 @@ class Notice {
       company: Company(name: json['company'] as String),
       title: json['title'] as String,
       date: json['date'] as String,
+      parsedDate: (json['parsed_date'] as List<dynamic>).map((date) {
+        try {
+          if (date == '0') {
+            return DateTime(9999, 12, 31);
+          } else {
+            return DateTime.parse(date);
+          }
+        } catch (e) {
+          print(e);
+          print(date);
+          assert(1 != 1);
+          return DateTime(9999, 12, 31);
+        }
+      }).toList(),
       link: json['link'] as String,
       year: Year(year: json['year'] as int),
     );
