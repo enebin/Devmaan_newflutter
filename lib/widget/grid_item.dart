@@ -2,6 +2,7 @@ import 'package:devmaan_newflutter/font.dart';
 
 import '../model/notice.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -28,6 +29,19 @@ class _NoticeItemState extends State<NoticeItem> {
     } else {
       throw "Could not launch $url";
     }
+  }
+
+  String getDateString(Notice notice) {
+    String result;
+    if (notice.parsedDate[0].year == 9999) {
+      result = "영입 종료 시";
+    } else {
+      DateFormat outFormat = DateFormat('yyyy.MM.dd');
+      result =
+          "${outFormat.format((notice.parsedDate[0]))} ~ ${outFormat.format((notice.parsedDate[1]))}";
+    }
+
+    return result;
   }
 
   @override
@@ -65,7 +79,7 @@ class _NoticeItemState extends State<NoticeItem> {
 
             // 날짜
             Text(
-              widget.notice.date,
+              getDateString(widget.notice),
               style: const TextStyle(
                 fontSize: 13,
                 fontFamily: MyFontFamily.nanumRegular,

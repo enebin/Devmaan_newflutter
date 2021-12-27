@@ -40,6 +40,8 @@ dependencies:
   responsive_grid: ^2.0.0
   number_slide_animation: ^0.2.1
   auto_size_text: ^3.0.0
+  intl: ^0.17.0
+
 
 dev_dependencies:
   flutter_test:
