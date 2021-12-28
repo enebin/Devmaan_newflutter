@@ -13,14 +13,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-// TODO: 정렬
+// TODO: 검색 사라지는 문제
 // TODO: 회사 로고 크기다듬기
+// TODO: 공고 최신순
 
 void main() {
   runApp(const MyApp());
 }
 
-enum SortBy { company, title, date, year }
+enum SortBy { date, year }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -85,6 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
         0, min(filtered.length, (_loadCount + 1) * _loadThisMuch));
   }
 
+  Map<String, bool> isSortSelected = {
+    'year': false,
+    'date': false,
+    'random': true,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -148,23 +155,56 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void sortByType(SortBy condition) {
-    if (condition == SortBy.company) {
-      setState(() {
-        _notices
-            .sort((a, b) => a.company.getName().compareTo(b.company.getName()));
-      });
-    } else if (condition == SortBy.title) {
-      setState(() {
-        _notices.sort((a, b) => a.title.compareTo(b.title));
-      });
-    } else if (condition == SortBy.year) {
-      setState(() {
-        print("Sort by year");
-        _notices
-            .sort((a, b) => a.year.getRawYear().compareTo(b.year.getRawYear()));
-      });
-    } else if (condition == SortBy.date) {}
+  void sortByYear() {
+    String keyWord = 'year';
+
+    setState(() {
+      print("Sort by $keyWord");
+      for (String s in isSortSelected.keys) {
+        if (s != keyWord) {
+          isSortSelected[s] = false;
+        } else {
+          isSortSelected[keyWord] = true;
+        }
+      }
+
+      _notices
+          .sort((a, b) => a.year.getRawYear().compareTo(b.year.getRawYear()));
+    });
+  }
+
+  void sortByDate() {
+    String keyWord = 'date';
+
+    setState(() {
+      print("Sort by $keyWord");
+      for (String s in isSortSelected.keys) {
+        if (s != keyWord) {
+          isSortSelected[s] = false;
+        } else {
+          isSortSelected[keyWord] = true;
+        }
+      }
+
+      _notices.sort((a, b) => a.parsedDate[1].compareTo(b.parsedDate[1]));
+    });
+  }
+
+  void sortByRandom() {
+    String keyWord = 'random';
+
+    setState(() {
+      print("Sort by $keyWord");
+      for (String s in isSortSelected.keys) {
+        if (s != keyWord) {
+          isSortSelected[s] = false;
+        } else {
+          isSortSelected[keyWord] = true;
+        }
+      }
+
+      _notices.shuffle();
+    });
   }
 
   void _scrollListener() {
@@ -197,7 +237,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    MediaQueryData queryData = MediaQuery.of(context);
+    const _minimumWindowSize = 800;
+
     Widget FloatingButton = FloatingActionButton(
       backgroundColor: Colors.blue,
       foregroundColor: Colors.white,
@@ -243,19 +285,31 @@ class _MyHomePageState extends State<MyHomePage> {
                     SearchTextField(
                       onSubmit: updateSearchFilter,
                       onDismiss: searchResultHandler,
+                      submitted: searchFilter,
                     ),
                     SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SortButton(
-                          onTap: sortByType,
-                          sortType: SortBy.year,
+                          onTap: sortByYear,
+                          color: Colors.blue.withOpacity(
+                              isSortSelected['year'] == true ? 1 : 0),
+                          text: "🏢 경력순",
                         ),
                         SizedBox(width: 15),
                         SortButton(
-                          onTap: sortByType,
-                          sortType: SortBy.date,
+                          onTap: sortByDate,
+                          color: Colors.blue.withOpacity(
+                              isSortSelected['date'] == true ? 1 : 0),
+                          text: "📅 마감일순",
+                        ),
+                        SizedBox(width: 15),
+                        SortButton(
+                          onTap: sortByRandom,
+                          color: Colors.blue.withOpacity(
+                              isSortSelected['random'] == true ? 1 : 0),
+                          text: "😊 랜덤 ~",
                         ),
                       ],
                     ),

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class SearchTextField extends StatefulWidget {
@@ -5,10 +6,12 @@ class SearchTextField extends StatefulWidget {
     Key? key,
     required this.onSubmit,
     required this.onDismiss,
+    required this.submitted,
   }) : super(key: key);
 
   void Function(String) onSubmit;
   VoidCallback onDismiss;
+  String submitted;
 
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
@@ -16,20 +19,25 @@ class SearchTextField extends StatefulWidget {
 
 class _SearchTextFieldState extends State<SearchTextField> {
   bool _isFocused = false;
-  String submitted = "";
   TextEditingController textController = TextEditingController();
 
   void _submitHandler(String text) {
     widget.onSubmit(text);
-    setState(() {
-      submitted = text;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    const _minimumWindowSize = 800;
+
+    double responsiveSize(double size) {
+      return queryData.size.width < _minimumWindowSize
+          ? size * queryData.size.width / _minimumWindowSize
+          : size;
+    }
+
     var SearchBar = Container(
-      width: 300,
+      width: responsiveSize(450),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.all(Radius.circular(20)),
@@ -43,10 +51,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
       child: Focus(
         child: TextField(
           onSubmitted: (text) {
-            widget.onSubmit(text);
-            setState(() {
-              submitted = text;
-            });
+            _submitHandler(text);
           },
           keyboardType: TextInputType.text,
           controller: textController,
@@ -92,30 +97,41 @@ class _SearchTextFieldState extends State<SearchTextField> {
               child: SearchBar,
             ),
           ),
-          if (submitted != "") ...[
+          if (widget.submitted != "") ...[
             Positioned(
               child: Align(
-                alignment: Alignment.center,
+                alignment: Alignment.centerRight,
                 child: Container(
-                  width: 150,
+                  width: responsiveSize(150),
                   padding: EdgeInsets.only(right: 25),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                      shadowColor: MaterialStateProperty.all(
+                          Colors.white.withOpacity(0.05)),
+                      backgroundColor: MaterialStateProperty.all(
+                          Colors.white.withOpacity(0.05)),
                     ),
                     onPressed: () {
                       setState(() {
                         widget.onSubmit("");
                         widget.onDismiss;
                         textController.text = "";
-                        submitted = "";
+                        widget.submitted = "";
                       });
                     },
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.cancel, size: 12),
-                        SizedBox(width: 5),
-                        Text(submitted),
+                        Icon(
+                          Icons.cancel,
+                          size: 12,
+                          color: Colors.black,
+                        ),
+                        AutoSizeText(
+                          widget.submitted,
+                          style: TextStyle(color: Colors.black),
+                          maxFontSize: 12,
+                        ),
                       ],
                     ),
                   ),

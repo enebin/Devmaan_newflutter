@@ -73,7 +73,7 @@ class Banner extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: AutoSizeText(
-                "원하는 회사만 골라서 볼 수 있어요!",
+                "원하는 회사만 골라서 볼 수 있어요! 👇",
                 style: TextStyle(
                   fontFamily: MyFontFamily.eliceBold,
                   fontWeight: FontWeight.bold,
