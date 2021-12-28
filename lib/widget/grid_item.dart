@@ -64,7 +64,7 @@ class _NoticeItemState extends State<NoticeItem> {
                 // 공고 제목
                 widget.notice.title,
                 style: TextStyle(
-                  fontSize: isMobile ? 13 : 17,
+                  fontSize: isMobile ? 11 : 15,
                   fontFamily: MyFontFamily.nanumBold,
                 ),
                 textAlign: TextAlign.center,

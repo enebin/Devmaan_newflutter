@@ -65,6 +65,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   fonts:
+    - family : Agro
+      fonts: 
+        - asset: assets/font/agroB.ttf
     - family : EliceBold
       fonts:   
         - asset: assets/font/EliceDigitalBaeum_Bold.ttf
