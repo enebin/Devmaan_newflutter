@@ -36,7 +36,7 @@ class GridView extends StatelessWidget {
             )
           ] else ...[
             ResponsiveGridList(
-              desiredItemWidth: 200,
+              desiredItemWidth: 220,
               minSpacing: 20,
               scroll: false,
               children:

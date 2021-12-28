@@ -1,12 +1,14 @@
 import 'dart:math';
 import 'dart:async';
 
+import 'package:devmaan_newflutter/widget/search_result.dart';
+
 import 'util.dart';
 import './model/notice.dart';
 import './widget/banner.dart' as banner;
 import './widget/company_list.dart';
 import './widget/grid_view.dart' as grid;
-import './widget/search_textfield.dart';
+import 'widget/search_textfield_row.dart';
 import './widget/sort_button.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '네카라쿠배-NKLCB',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -237,8 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-    const _minimumWindowSize = 800;
+    var size = MediaQuery.of(context).size;
+    bool isMobile = Util.mobileScreenSize > size.width;
 
     Widget FloatingButton = FloatingActionButton(
       backgroundColor: Colors.blue,
@@ -277,18 +279,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: ListView(
                   controller: scrollController,
                   children: [
+                    // 상단 배너
                     banner.Banner(),
+
+                    // 회사 리스트
                     CompanyList(
                       onTap: updateCompanyFilter,
                       filters: companyFilter,
                     ),
+
+                    // 검색창
                     SearchTextField(
                       onSubmit: updateSearchFilter,
                       onDismiss: searchResultHandler,
-                      submitted: searchFilter,
+                      submittedText: searchFilter,
                       length: _filteredNotices.length,
                     ),
                     SizedBox(height: 15),
+
+                    // 정렬 버튼들
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -314,6 +323,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
+
+                    // 컨텐츠 그리드 뷰
                     if (_notices.isNotEmpty) ...[
                       Align(
                         alignment: Alignment.center,

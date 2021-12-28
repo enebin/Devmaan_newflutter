@@ -1,6 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+import './search_result.dart';
 import '../util.dart';
 
 class SearchTextField extends StatefulWidget {
@@ -8,13 +8,13 @@ class SearchTextField extends StatefulWidget {
     Key? key,
     required this.onSubmit,
     required this.onDismiss,
-    required this.submitted,
+    required this.submittedText,
     required this.length,
   }) : super(key: key);
 
   void Function(String) onSubmit;
   VoidCallback onDismiss;
-  String submitted;
+  String submittedText;
   int length;
 
   @override
@@ -25,21 +25,31 @@ class _SearchTextFieldState extends State<SearchTextField> {
   bool _isFocused = false;
   TextEditingController textController = TextEditingController();
 
-  void _submitHandler(String text) {
-    widget.onSubmit(text);
-  }
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
     var size = MediaQuery.of(context).size;
     const _minimumWindowSize = 800;
     bool isMobile = Util.mobileScreenSize > size.width;
+    bool isMedium = _minimumWindowSize > size.width;
 
     double responsiveSize(double size) {
       return queryData.size.width < _minimumWindowSize
           ? size * queryData.size.width / _minimumWindowSize
           : size;
+    }
+
+    void _submitHandler(String text) {
+      widget.onSubmit(text);
+    }
+
+    void _resultHandler() {
+      setState(() {
+        widget.onSubmit("");
+        widget.onDismiss;
+        textController.text = "";
+        widget.submittedText = "";
+      });
     }
 
     var SearchBar = Container(
@@ -93,81 +103,58 @@ class _SearchTextFieldState extends State<SearchTextField> {
         },
       ),
     );
-    return Container(
-      padding: EdgeInsets.only(top: 25),
-      child: Stack(
-        children: [
+
+    Widget stackType = Stack(
+      // 검색창에 행으로 겹치는 타입
+      children: [
+        Positioned(
+          child: Align(
+            // 검색창
+            alignment: Alignment.center,
+            child: SearchBar,
+          ),
+        ),
+        if (widget.submittedText != "" && isMobile == false) ...[
+          // 검색 상태 및 결과 -> 크기가 작거나 검색한 것이 없으면 안 보인다.
           Positioned(
             child: Align(
-              alignment: Alignment.center,
-              child: SearchBar,
-            ),
-          ),
-          if (widget.submitted != "") ...[ // 검색 상태
-            Positioned(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Container(
+              alignment: Alignment.centerRight,
+              child: Container(
                   width: responsiveSize(150),
-                  padding: EdgeInsets.only(right: 25),
-                  child: SearchResult()
-                ),
-              ),
-            )
-          ]
-        ],
-      ),
+                  padding: EdgeInsets.only(right: responsiveSize(25)),
+                  child: SearchResult(
+                    onTap: _resultHandler,
+                    resultLength: widget.length,
+                    submittedText: widget.submittedText,
+                  )),
+            ),
+          )
+        ]
+      ],
     );
-  }
-}
 
+    Widget columnType = Column(children: [
+      // 검색창과 위아래로 쌓는 타입
+      SearchBar,
+      SizedBox(height: 7),
+      if (widget.submittedText != "") ...[
+        // 검색 상태 및 결과 -> 크기가 작거나 검색한 것이 없으면 안 보인다.
+        Container(
+          width: 130,
+          // padding: EdgeInsets.only(right: 25),
+          child: SearchResult(
+            onTap: _resultHandler,
+            resultLength: widget.length,
+            submittedText: widget.submittedText,
+            isRowType: true,
+          ),
+        ),
+      ],
+    ]);
 
-class SearchResult extends StatelessWidget {
-  const SearchResult({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          shadowColor: MaterialStateProperty.all(
-                              Colors.white.withOpacity(1)),
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.white.withOpacity(0.5)),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            widget.onSubmit("");
-                            widget.onDismiss;
-                            textController.text = "";
-                            widget.submitted = "";
-                          });
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(
-                              Icons.cancel,
-                              size: 12,
-                              color: Colors.black,
-                            ),
-                            AutoSizeText(
-                              widget.submitted,
-                              style: TextStyle(color: Colors.black),
-                              maxFontSize: 14,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      AutoSizeText(
-                        "검색결과 ${widget.length}개",
-                        maxLines: 1,
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      )
-                    ],
-                  ),
+    return Container(
+      padding: EdgeInsets.only(top: 25),
+      child: isMedium ? columnType : stackType,
+    );
   }
 }
