@@ -1,4 +1,5 @@
 import 'package:devmaan_newflutter/font.dart';
+import 'package:devmaan_newflutter/util.dart';
 
 import '../model/notice.dart';
 import 'package:flutter/material.dart';
@@ -46,33 +47,38 @@ class _NoticeItemState extends State<NoticeItem> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    bool isMobile = Util.mobileScreenSize > size.width;
+
     Widget card = Card(
       elevation: isHovering ? 15 : 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Center(
         child: Column(
           children: [
-            Spacer(),
+            if (!isMobile) ...[Spacer()],
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
               child: AutoSizeText(
                 // 공고 제목
                 widget.notice.title,
-                style: const TextStyle(
-                  fontSize: 17,
+                style: TextStyle(
+                  fontSize: isMobile ? 13 : 17,
                   fontFamily: MyFontFamily.nanumBold,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 3,
               ),
             ),
-            const SizedBox(height: 15),
+
+            SizedBox(height: isMobile ? 5 : 15),
+
             // 로고
             Image.asset(
               'images/' +
                   widget.notice.company.getName().toLowerCase() +
                   '.png',
-              width: 70,
+              width: isMobile ? 45 : 70,
               fit: BoxFit.fitWidth,
             ),
             const SizedBox(height: 5),
@@ -80,8 +86,8 @@ class _NoticeItemState extends State<NoticeItem> {
             // 날짜
             Text(
               getDateString(widget.notice),
-              style: const TextStyle(
-                fontSize: 13,
+              style: TextStyle(
+                fontSize: isMobile ? 9 : 13,
                 fontFamily: MyFontFamily.nanumRegular,
                 color: Colors.grey,
               ),
@@ -92,14 +98,14 @@ class _NoticeItemState extends State<NoticeItem> {
 
             // 태그 박스
             Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(isMobile ? 5 : 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      height: 30,
+                      height: isMobile ? 23 : 30,
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.8),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -107,13 +113,14 @@ class _NoticeItemState extends State<NoticeItem> {
                       child: Center(
                         child: Text(
                           widget.notice.year.getStrYear(),
-                          style: TextStyle(color: Colors.white, fontSize: 10),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: isMobile ? 8 : 10),
                         ),
                       ))
                 ],
               ),
             ),
-            SizedBox(height: 10)
+            SizedBox(height: isMobile ? 5 : 10)
           ],
         ),
       ),
@@ -124,7 +131,7 @@ class _NoticeItemState extends State<NoticeItem> {
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
-          height: 230,
+          height: isMobile ? 160 : 230,
           child: Container(
             decoration: BoxDecoration(
               boxShadow: [

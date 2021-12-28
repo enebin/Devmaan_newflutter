@@ -1,3 +1,4 @@
+import 'package:devmaan_newflutter/util.dart';
 import 'package:flutter/material.dart';
 import '../font.dart';
 
@@ -11,11 +12,12 @@ class Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
-    const _minimumWindowSize = 800;
+    var size = queryData.size;
+    bool isMobile = Util.mobileScreenSize > size.width;
 
     double responsiveSize(double size) {
-      return queryData.size.width < _minimumWindowSize
-          ? size * queryData.size.width / _minimumWindowSize
+      return queryData.size.width < Util.mediumScreenSize
+          ? size * queryData.size.width / Util.mediumScreenSize
           : size;
     }
 
@@ -23,7 +25,7 @@ class Banner extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+          padding: EdgeInsets.only(left: isMobile ? 8 : 25),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +33,7 @@ class Banner extends StatelessWidget {
               AutoSizeText(
                 "Big 5 개발자 채용 공고",
                 style: TextStyle(
-                    fontSize: responsiveSize(35),
+                    fontSize: isMobile ? 20 : responsiveSize(35),
                     fontFamily: MyFontFamily.eliceBold,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
@@ -40,7 +42,7 @@ class Banner extends StatelessWidget {
               AutoSizeText(
                 "여기 다 모아 놨어!",
                 style: TextStyle(
-                    fontSize: responsiveSize(50),
+                    fontSize: isMobile ? 35 : responsiveSize(50),
                     fontFamily: MyFontFamily.eliceBold,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
@@ -50,10 +52,10 @@ class Banner extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: EdgeInsets.all(isMobile ? 0 : 25.0),
           child: Image.asset(
             'images/search.png',
-            width: queryData.size.width < _minimumWindowSize ? 0 : 250,
+            width: queryData.size.width < Util.mediumScreenSize ? 0 : 250,
             fit: BoxFit.fitWidth,
           ),
         ),

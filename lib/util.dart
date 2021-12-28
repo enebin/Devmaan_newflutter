@@ -3,6 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'model/notice.dart';
 
 class Util {
+  static double mobileScreenSize = 450;
+  static double mediumScreenSize = 800;
+
   bool checkIsWeb() {
     bool isWeb;
     try {
