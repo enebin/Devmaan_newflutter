@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../model/notice.dart';
+import '../util.dart';
 import './company_item.dart';
 
 class CompanyList extends StatefulWidget {
@@ -29,6 +30,9 @@ class _CompanyListState extends State<CompanyList> {
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
     const _minimumWindowSize = 800;
+    var size = MediaQuery.of(context).size;
+
+    bool isMobile = Util.mobileScreenSize > size.width;
 
     double responsiveSize(double size) {
       return queryData.size.width < _minimumWindowSize

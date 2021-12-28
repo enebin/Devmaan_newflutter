@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+import '../util.dart';
+
 class SearchTextField extends StatefulWidget {
   SearchTextField({
     Key? key,
@@ -30,7 +32,9 @@ class _SearchTextFieldState extends State<SearchTextField> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
+    var size = MediaQuery.of(context).size;
     const _minimumWindowSize = 800;
+    bool isMobile = Util.mobileScreenSize > size.width;
 
     double responsiveSize(double size) {
       return queryData.size.width < _minimumWindowSize
@@ -39,7 +43,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
     }
 
     var SearchBar = Container(
-      width: responsiveSize(450),
+      width: isMobile ? 250 : responsiveSize(450),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.all(Radius.circular(20)),
@@ -99,14 +103,31 @@ class _SearchTextFieldState extends State<SearchTextField> {
               child: SearchBar,
             ),
           ),
-          if (widget.submitted != "") ...[
+          if (widget.submitted != "") ...[ // 검색 상태
             Positioned(
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Container(
                   width: responsiveSize(150),
                   padding: EdgeInsets.only(right: 25),
-                  child: Column(
+                  child: SearchResult()
+                ),
+              ),
+            )
+          ]
+        ],
+      ),
+    );
+  }
+}
+
+
+class SearchResult extends StatelessWidget {
+  const SearchResult({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
@@ -148,12 +169,5 @@ class _SearchTextFieldState extends State<SearchTextField> {
                       )
                     ],
                   ),
-                ),
-              ),
-            )
-          ]
-        ],
-      ),
-    );
   }
 }

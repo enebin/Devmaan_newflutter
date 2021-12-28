@@ -49,6 +49,7 @@ class _NoticeItemState extends State<NoticeItem> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     bool isMobile = Util.mobileScreenSize > size.width;
+    bool isLine = (widget.notice.company.getName() == "Line");
 
     Widget card = Card(
       elevation: isHovering ? 15 : 0,
@@ -74,12 +75,21 @@ class _NoticeItemState extends State<NoticeItem> {
             SizedBox(height: isMobile ? 5 : 15),
 
             // 로고
-            Image.asset(
-              'images/' +
-                  widget.notice.company.getName().toLowerCase() +
-                  '.png',
-              width: isMobile ? 45 : 70,
-              fit: BoxFit.fitWidth,
+            Padding(
+              padding: EdgeInsets.all(isMobile ? 3 : 8),
+              child: Image.asset(
+                'images/' +
+                    widget.notice.company.getName().toLowerCase() +
+                    '.png',
+                width: isMobile
+                    ? isLine
+                        ? 30
+                        : 45
+                    : isLine
+                        ? 55
+                        : 70,
+                fit: BoxFit.fitWidth,
+              ),
             ),
             const SizedBox(height: 5),
 
@@ -131,13 +141,13 @@ class _NoticeItemState extends State<NoticeItem> {
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
-          height: isMobile ? 160 : 230,
+          height: isMobile ? 160 : 240,
           child: Container(
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 12,
-                  spreadRadius: 5,
+                  blurRadius: isMobile ? 7 : 12,
+                  spreadRadius: isMobile ? 3 : 5,
                   color: Colors.grey.withOpacity(0.4),
                 )
               ],
@@ -147,7 +157,6 @@ class _NoticeItemState extends State<NoticeItem> {
         ),
       ),
       onTap: () {
-        print("SSS");
         _openUrl(widget.notice.link);
       },
       onHover: (on) {

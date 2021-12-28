@@ -25,6 +25,7 @@ class _CompanyItemState extends State<CompanyItem> {
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
     const _minimumWindowSize = 800;
+    bool isLine = widget.company.getName() == 'Line';
 
     double responsiveSize(double size) {
       return queryData.size.width < _minimumWindowSize
@@ -46,7 +47,7 @@ class _CompanyItemState extends State<CompanyItem> {
                 children: [
                   Image.asset(
                     'images/' + widget.company.getName().toLowerCase() + '.png',
-                    width: responsiveSize(80),
+                    width: responsiveSize(isLine ? 60 : 80),
                     fit: BoxFit.fitWidth,
                   ),
                   if (widget.isSelected) ...[
