@@ -286,6 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onSubmit: updateSearchFilter,
                       onDismiss: searchResultHandler,
                       submitted: searchFilter,
+                      length: _filteredNotices.length,
                     ),
                     SizedBox(height: 15),
                     Row(

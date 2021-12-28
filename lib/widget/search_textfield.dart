@@ -7,11 +7,13 @@ class SearchTextField extends StatefulWidget {
     required this.onSubmit,
     required this.onDismiss,
     required this.submitted,
+    required this.length,
   }) : super(key: key);
 
   void Function(String) onSubmit;
   VoidCallback onDismiss;
   String submitted;
+  int length;
 
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
@@ -104,36 +106,46 @@ class _SearchTextFieldState extends State<SearchTextField> {
                 child: Container(
                   width: responsiveSize(150),
                   padding: EdgeInsets.only(right: 25),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      shadowColor: MaterialStateProperty.all(
-                          Colors.white.withOpacity(0.05)),
-                      backgroundColor: MaterialStateProperty.all(
-                          Colors.white.withOpacity(0.05)),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        widget.onSubmit("");
-                        widget.onDismiss;
-                        textController.text = "";
-                        widget.submitted = "";
-                      });
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          size: 12,
-                          color: Colors.black,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          shadowColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(1)),
+                          backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.5)),
                         ),
-                        AutoSizeText(
-                          widget.submitted,
-                          style: TextStyle(color: Colors.black),
-                          maxFontSize: 12,
+                        onPressed: () {
+                          setState(() {
+                            widget.onSubmit("");
+                            widget.onDismiss;
+                            textController.text = "";
+                            widget.submitted = "";
+                          });
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              Icons.cancel,
+                              size: 12,
+                              color: Colors.black,
+                            ),
+                            AutoSizeText(
+                              widget.submitted,
+                              style: TextStyle(color: Colors.black),
+                              maxFontSize: 14,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        "검색결과 ${widget.length}개",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      )
+                    ],
                   ),
                 ),
               ),
