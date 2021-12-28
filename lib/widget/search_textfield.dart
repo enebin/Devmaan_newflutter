@@ -141,8 +141,9 @@ class _SearchTextFieldState extends State<SearchTextField> {
                         ),
                       ),
                       SizedBox(height: 15),
-                      Text(
+                      AutoSizeText(
                         "검색결과 ${widget.length}개",
+                        maxLines: 1,
                         style: TextStyle(color: Colors.black, fontSize: 12),
                       )
                     ],
