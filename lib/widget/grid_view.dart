@@ -28,7 +28,7 @@ class GridView extends StatelessWidget {
         children: [
           if (isMobile) ...[
             ResponsiveGridList(
-              desiredItemWidth: 90,
+              desiredItemWidth: 120,
               minSpacing: isMobile ? 10 : 20,
               scroll: false,
               children:
@@ -36,7 +36,7 @@ class GridView extends StatelessWidget {
             )
           ] else ...[
             ResponsiveGridList(
-              desiredItemWidth: 220,
+              desiredItemWidth: 200,
               minSpacing: 20,
               scroll: false,
               children:

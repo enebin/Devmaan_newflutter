@@ -51,14 +51,55 @@ class Banner extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.all(isMobile ? 0 : 25.0),
-          child: Image.asset(
-            'images/search.png',
-            width: queryData.size.width < Util.mediumScreenSize ? 0 : 250,
-            fit: BoxFit.fitWidth,
-          ),
-        ),
+        // Padding(
+        //   padding: EdgeInsets.all(isMobile ? 0 : 25.0),
+        //   child: Image.asset(
+        //     'images/search.png',
+        //     width: queryData.size.width < Util.mediumScreenSize ? 0 : 250,
+        //     fit: BoxFit.fitWidth,
+        //   ),
+        // ),
+        Column(
+          mainAxisAlignment: queryData.size.width < Util.mediumScreenSize
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.center,
+          children: [
+            AutoSizeText(
+              "네카라쿠배",
+              style: TextStyle(
+                  fontSize: queryData.size.width < Util.mediumScreenSize
+                      ? 0
+                      : responsiveSize(75),
+                  fontFamily: MyFontFamily.eliceBold,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              maxLines: 1,
+            ),
+            AutoSizeText(
+              "NKLCB",
+              style: TextStyle(
+                  fontSize: queryData.size.width < Util.mediumScreenSize
+                      ? 0
+                      : responsiveSize(45),
+                  fontFamily: MyFontFamily.eliceBold,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              maxLines: 1,
+            ),
+          ],
+        )
+        // Padding(
+        //   padding: EdgeInsets.all(isMobile ? 0 : 25.0),
+        //   child: AutoSizeText(
+        //     "네카라쿠배",
+        //     style: TextStyle(
+        //         fontSize: isMobile ? 50 : responsiveSize(75),
+        //         fontFamily: MyFontFamily.eliceBold,
+        //         fontWeight: FontWeight.bold,
+        //         color: Colors.white),
+        //     maxLines: 1,
+        //   ),
+        // ),
         // const Spacer(),
       ],
     );
